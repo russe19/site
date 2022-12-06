@@ -1,0 +1,23 @@
+{% extends 'app_media/base.html' %}
+{% load i18n %}
+
+{% block title %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Main page" %}</title>
+</head>
+{% endblock %}
+
+{% block content %}
+<h2>{% trans "Blog user" %} {{ request.user }}</h2>
+<p><a href="/covers">{% trans "Main page" %}</a> </p>
+<p><a href="/logout">{% trans "Sign out from account" %}</a> </p>
+<p><a href="/upload_cover">{% trans "Entry post" %}</a> </p>
+<p>{% trans "First name" %}: {{ request.user.first_name }}</p>
+<p>{% trans "Last name" %}: {{ request.user.last_name }}</p>
+<p>{% trans "Email" %}: {{ request.user.email }}</p>
+<p>{% trans "City" %}: {{ request.user.profile.city }}</p>
+<p>{% trans "Number" %}: {{ request.user.profile.number }}</p>
+<a href="/update/{{ user.id }}">{% trans "Edit profile" %}</a>
+<hr>
+{% endblock %}
