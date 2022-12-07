@@ -13,7 +13,7 @@ class RegisterForm(UserCreationForm):
 class RegisterFormUpdate(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('balance',)
+        fields = ('telegram', 'number')
 
 
 class CoverForm(forms.Form):
@@ -28,12 +28,14 @@ class MusicForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea, max_length=1000, help_text=_('Description'))
     files = forms.FileField(help_text=_('Audio'))
     price = forms.IntegerField(help_text=_('Price'), min_value=0, max_value=999999)
+    genre = forms.ModelChoiceField(queryset=None)
 
 
 class TextForm(forms.Form):
     name = forms.CharField(max_length=50, help_text=_('Text name'))
-    description = forms.CharField(widget=forms.Textarea, max_length=1000, help_text=_('Description'))
+    text = forms.CharField(widget=forms.Textarea, max_length=1000, help_text=_('Text'))
     price = forms.IntegerField(help_text=_('Price'), min_value=0, max_value=999999)
+    style = forms.ModelChoiceField(queryset=None)
 
 
 class BalanceForm(forms.Form):

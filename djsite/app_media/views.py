@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, Http404
 from django.contrib.auth.views import LoginView, LogoutView
 from app_media.models import Profile, Cover, CoverImage, MusicText, Music, MusicSound, Status
-from app_media.forms import RegisterForm, CoverForm
+from app_media.forms import RegisterForm, CoverForm, MusicForm, TextForm, RegisterFormUpdate
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist
@@ -112,11 +112,7 @@ class Main(ListView):
     model = Cover
     template_name = 'app_media/main.html'
     context_object_name = 'entres'
-    queryset = Cover.objects.all()
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(user_id=self.request.user)
 
 class CoverList(ListView):
     model = Cover
@@ -125,9 +121,35 @@ class CoverList(ListView):
     queryset = Cover.objects.all().order_by('-created_at')
 
 
+class MusicList(ListView):
+    model = Music
+    template_name = 'app_media/music_list.html'
+    context_object_name = 'entres'
+    queryset = Cover.objects.all().order_by('-created_at')
+
+
+class TextList(ListView):
+    model = MusicText
+    template_name = 'app_media/text_list.html'
+    context_object_name = 'entres'
+    queryset = Cover.objects.all().order_by('-created_at')
+
+
 class CoverDetail(DetailView):
     model = Cover
     template_name = 'app_media/cover_detail.html'
+    context_object_name = 'entry'
+
+
+class MusicDetail(DetailView):
+    model = Music
+    template_name = 'app_media/music_detail.html'
+    context_object_name = 'entry'
+
+
+class TextDetail(DetailView):
+    model = MusicText
+    template_name = 'app_media/text_detail.html'
     context_object_name = 'entry'
 
 
@@ -147,5 +169,33 @@ class UploadCover(LoginRequiredMixin, FormView):
         return redirect('/main')
 
 
+class UploadMusic(LoginRequiredMixin, FormView):
+    form_class = MusicForm
+    template_name = 'app_media/music_create.html'
+    success_url = '/main'
 
+    def form_valid(self, form):
+        entry = Music.objects.create(user=self.request.user,
+                                     name=self.request.POST['name'],
+                                     description=self.request.POST['description'],
+                                     price=self.request.POST['price'],
+                                     genre=self.request.POST['genre'])
+
+        entry_file = MusicSound.objects.create(entry=entry, file=self.request.FILES['files'])
+        entry_file.save()
+        return redirect('/main')
+
+
+class UploadText(LoginRequiredMixin, FormView):
+    form_class = TextForm
+    template_name = 'app_media/text_create.html'
+    success_url = '/main'
+
+    def form_valid(self, form):
+        entry = MusicText.objects.create(user=self.request.user,
+                                         name=self.request.POST['name'],
+                                         text=self.request.POST['text'],
+                                         price=self.request.POST['price'],
+                                         style=self.request.POST['style'])
+        return redirect('/main')
 
